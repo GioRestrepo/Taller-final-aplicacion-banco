@@ -26,7 +26,10 @@ public class TransaccionServicio implements Servicio {
         String tipoTransaccion = (String) objeto.get("tipoTransaccion");
         float monto = Float.parseFloat(objeto.get("monto").toString());
         int idCuenta = (int) objeto.get("idCuenta");
-        String tipoCuentaDestino = (String) objeto.get("tipoCuentaDestino");
+        String tipoCuentaDestino = "";
+        if(objeto.get("tipoCuentaDestino") != null){
+            tipoCuentaDestino = (String) objeto.get("tipoCuentaDestino");
+        }
 
         // Validamos los campos que obtenemos de la peticion
         Validaciones.validarCamposTransacciones(tipoTransaccion, tipoCuentaDestino, idCuenta, monto);
@@ -40,16 +43,19 @@ public class TransaccionServicio implements Servicio {
         // Creamos el objecto transaccion
         Transaccion transaccion = new Transaccion(0, tipoTransaccion, monto, idCuenta, tipoCuentaDestino);
 
+        String tipoCuenta = cuenta.getTipoCuenta();
         // Casteamos al tipo de cuenta
-        if(cuenta.getTipoCuenta().equals("CC")){
+        if(tipoCuenta.equals("CC")){
             CuentaCorriente cuentaCorriente = new CuentaCorriente(cuenta.getTipoCuenta(), cuenta.getNumeroDeCuenta(), cuenta.getIdUsuario(), cuenta.getSaldo());
             // Aplicamos el tipo de transaccion
-            cuenta.RealizarTransaccion(transaccion);
+            cuentaCorriente.RealizarTransaccion(transaccion);
+            cuentaCorriente.setId(cuenta.getId());
             cuenta = cuentaCorriente;
         } else {
             CuentaDeAhorros cuentaAhorro = new CuentaDeAhorros(cuenta.getTipoCuenta(), cuenta.getNumeroDeCuenta(), cuenta.getIdUsuario(), cuenta.getSaldo());
             // Aplicamos el tipo de transaccion
-            cuenta.RealizarTransaccion(transaccion);
+            cuentaAhorro.RealizarTransaccion(transaccion);
+            cuentaAhorro.setId(cuenta.getId());
             cuenta = cuentaAhorro;
         }
 

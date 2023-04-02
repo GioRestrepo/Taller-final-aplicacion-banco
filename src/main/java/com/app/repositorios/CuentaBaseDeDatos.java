@@ -167,10 +167,12 @@ public class CuentaBaseDeDatos implements Repositorio {
                     "UPDATE CUENTAS SET SALDO = ? WHERE ID = ?";
 
             PreparedStatement sentencia = conexion.prepareStatement(sentenciaSql);
-            sentencia.setDouble(1, cuenta.getSaldo());
-            sentencia.setInt(2, (int) cuenta.getId());
+            sentencia.setFloat(1, cuenta.getSaldo());
+            sentencia.setInt(2, cuenta.getId());
 
-            return sentencia.executeUpdate();
+            int cantidadActualzada = sentencia.executeUpdate();
+
+            return cantidadActualzada;
         } catch (SQLException e) {
             throw new RuntimeException("Error de base de datos: " + e);
         } catch (Exception e) {

@@ -4,8 +4,6 @@ public class Validaciones {
     public static void validarCamposTransacciones(String tipoTransaccion,String tipoCuentaDestino, int idCuenta, float monto){
         if(tipoTransaccion == null ||
                 tipoTransaccion.equalsIgnoreCase("") ||
-                tipoCuentaDestino == null ||
-                tipoCuentaDestino.equalsIgnoreCase("") ||
                 monto < 0 || idCuenta < 0)
         {
             throw new RuntimeException("Los valores ingresados son incorrectos");
@@ -19,7 +17,12 @@ public class Validaciones {
                     "retirar, depositar y transferir");
         }
 
-        if(!tipoCuentaDestino.equalsIgnoreCase("CA") && !tipoCuentaDestino.equalsIgnoreCase("CC")){
+        if(tipoTransaccion.equalsIgnoreCase("transferir") && (tipoCuentaDestino == null ||
+                tipoCuentaDestino.equalsIgnoreCase(""))){
+            throw new RuntimeException("El campo tipo de cuenta destino es obligatorio si la transacción es de tipo transferencia");
+        }
+
+        if(tipoTransaccion.equalsIgnoreCase("transferir") && !tipoCuentaDestino.equalsIgnoreCase("CA") && !tipoCuentaDestino.equalsIgnoreCase("CC")){
             throw new RuntimeException("El tipo de cuenta destino no es valido, los unicos tipos validos son CC (Para cuetna de ahorro)" +
                     " y CA (Para cuenta corriente)");
         }
