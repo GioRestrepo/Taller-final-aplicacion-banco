@@ -39,23 +39,26 @@ public class TransaccionBaseDeDatos implements Repositorio {
     }
 
     @Override
-    public String eliminar(Object objeto) {
+    public String eliminar(Object id) {
         try (Connection conexion = DriverManager.getConnection(conexionBD)) {
-            Transaccion transaccionAEliminar = (Transaccion) objeto;
 
             // * Eliminamos las transacciones
             String sentenciaEliminarTransaccionsSql = "DELETE FROM TRANSACCIONES WHERE ID = ?";
             PreparedStatement sentenciaEliminarTransacciones = conexion.prepareStatement(sentenciaEliminarTransaccionsSql);
 
-            sentenciaEliminarTransacciones.setInt(1, transaccionAEliminar.getId());
-            sentenciaEliminarTransacciones.executeQuery();
+            sentenciaEliminarTransacciones.setInt(1, (int) id);
+            int cantidadDeTuplasAfectadas = sentenciaEliminarTransacciones.executeUpdate();
 
-            return "La transacción ha sido eliminada";
+            if(cantidadDeTuplasAfectadas > 0){
+                return "La transacción ha sido eliminada";
+            } else {
+                throw new RuntimeException("Ha ocurrido un error al eliminar la transaccion");
+            }
 
         } catch (SQLException e) {
-            return "Error de base de datos: " + e;
+            throw new RuntimeException("Error de base de datos: " + e);
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 
